@@ -12,7 +12,7 @@ You can configure it via the following environment variables:
           - name: METRICS_ROUTE
             value: "/metrics"
           - name: METRICS_PORT
-            value: "80"
+            value: "8080"
           - name: METRICS_COMPONENT
             value: "applications"
           - name: METRICS_SOURCE
