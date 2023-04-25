@@ -2,6 +2,7 @@
 
 ### A very simple Go app for [K3S Example Project](https://github.com/madlopt/k3s-example-project ) 
 
+The logic is exactly the same as [here](https://github.com/madlopt/simple-nodejs-app ). So, it just providing the `/metrics` endpoint with Prometheus metrics and sending "I'm alive" log.
 
 You can configure it via the following environment variables:
 
