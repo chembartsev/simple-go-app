@@ -1,0 +1,43 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Build Docker image
+      run: |
+        docker build -t simple-go-app:${{ github.sha }} .
+        docker tag simple-go-app:${{ github.sha }} simple-go-app:latest
+        echo "✅ Build successful: simple-go-app:${{ github.sha }}"
+    
+    - name: Test Docker image
+      run: |
+        docker run --rm simple-go-app:${{ github.sha }} echo "✅ Docker image works correctly!"
+    
+    - name: Show deployment instructions
+      run: |
+        echo "🚀 MANUAL DEPLOYMENT STEPS:"
+        echo "1. SSH to your VM"
+        echo "2. cd /home/testdocker/simple-go-app"
+        echo "3. git pull origin main"
+        echo "4. docker-compose down"
+        echo "5. docker-compose up -d --build"
+        echo "6. Verify: curl http://localhost:80"
+        echo ""
+        echo "📦 Image version: simple-go-app:${{ github.sha }}"
