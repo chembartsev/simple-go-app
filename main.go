@@ -3,33 +3,22 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"simple-go-app/config"
-	"simple-go-app/metrics"
-	"time"
 )
 
 func main() {
-	configData := config.GetConfig()
+	// Простой HTTP сервер
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "<h1>Simple Go App</h1><p>CI/CD is working! 🚀</p>")
+	})
 
-	// Starting the server
-	go func() {
-		err := http.ListenAndServe(fmt.Sprintf(":%d", configData.Metrics.Port), nil)
-		if err != nil {
-			panic(err)
-		}
-	}()
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "OK")
+	})
 
-	// Just to see if the app is alive
-	go func() {
-		for {
-			time.Sleep(time.Duration(configData.StdOutLogTimeout) * time.Millisecond)
-			fmt.Printf("[%s] %s is alive\n", time.Now().UTC().Format(time.RFC3339), configData.ProjectName)
-		}
-	}()
+	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello World!")
+	})
 
-	// Starting message
-	fmt.Printf("[%s] %s is started\n", time.Now().UTC().Format(time.RFC3339), configData.ProjectName)
-
-	metrics.RegisterMetrics(metrics.NewMetrics())
-	select {}
+	fmt.Println("Server starting on :8080...")
+	http.ListenAndServe(":8080", nil)
 }

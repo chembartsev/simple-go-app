@@ -1,26 +1,12 @@
-# Start with the base golang image
-FROM golang:1.20-alpine AS build
-
-# Set the working directory to /app
+FROM golang:1.21-alpine AS builder
 WORKDIR /app
-
-# Copy the source code to the container
 COPY . .
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# Build the binary
-RUN go build -o simple-go-app
-
-# Use a small image for the final build
-FROM alpine:3.14
-
-# Set the working directory to /app
-WORKDIR /app
-
-# Copy the binary from the build image
-COPY --from=build /app/simple-go-app .
-
-# Expose port 8080 for the app
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
 EXPOSE 8080
-
-# Set the command to run the app
-CMD ["./simple-go-app"]
+CMD ["./main"]
