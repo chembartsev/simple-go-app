@@ -1,37 +1,37 @@
 # simple-go-app
 
-### A very simple Go app for [K3S Example Project](https://github.com/madlopt/k3s-example-project ) 
+Предварительные требования
+Развернута виртуальная машина Ubuntu с установленными Docker и Docker Compose
 
-The logic is exactly the same as [here](https://github.com/madlopt/simple-nodejs-app ). So, it just providing the `/metrics` endpoint with Prometheus metrics and sending "I'm alive" log.
+Шаги развертывания:
+1. Клонировать репозиторий:
+   git clone https://github.com/chembartsev/simple-go-app.git
+   cd simple-go-app
 
-You can configure it via the following environment variables:
+2. Запустить все сервисы с помощью docker-compose
+   docker-compose up -d --build
 
-          - name: PROJECT_NAME
-            value: "go-test-app"
-          - name: CONSOLE_LOG_TIMEOUT
-            value: "5000"
-          - name: METRICS_ROUTE
-            value: "/metrics"
-          - name: METRICS_PORT
-            value: "8080"
-          - name: METRICS_COMPONENT
-            value: "applications"
-          - name: METRICS_SOURCE
-            value: "go-test-app"
-          - name: METRICS_NAMESPACE
-            value: "default"
+3. Проверить доступ: 
+Приложение: http://your-vm-ip
+Grafana: http://your-vm-ip:3000 (admin/admin123)
+Prometheus: http://your-vm-ip:9090
 
-The app is just sending `PROJECT_NAME is alive` message to the console every `CONSOLE_LOG_TIMEOUT` milliseconds and exposing the metrics endpoint on the `METRICS_ROUTE` route and `METRICS_PORT` port.
+4. Настроить дашборд в Grafana, добавив источником данных Prometheus
 
-### Metrics & Prom-Client Memory Leak
-
-There are a lot of default metrics available, from the [client_golang](https://github.com/prometheus/client_golang/) library. And the one is custom one ``http_requests_counter`` which is a counter of all the requests to the application just as an example of custom metric you can add.
-
-### DockerHub Image
-
-The image I'm using for [K3S Example Project](https://github.com/madlopt/k3s-example-project ) is [there](https://hub.docker.com/r/madloptus/goapp) you can pull it by running `docker pull madloptus/goapp`
-
-### Running the app locally
-
-Not sure even if someone will need it, but if you want to run the app locally, there is the docket-compose file for that. Just run `docker-compose up` and the app will be available on the `http://localhost:8080`. 
+*******Мои действия при выполнении задания*******
+1. Нашел простое приложение https://github.com/madlopt/simple-go-app/tree/main
+2. Сделал fork в свой репозиторий 
+3. Клонировал на виртуальную машину ubuntu
+4. Изменил\создал файлы:
+dockerfile 
+docker-compose.yml 
+main go 
+prometheus.yml
+5. Развернул на виртуальной машине с помощью docker-compose
+6. Проверил доступность и работу
+http://localhost/
+http://localhost:3000
+http://localhost/health
+7. Сделал build с помощью action в github, создав перед этим файл ci.yml
+8. В Grafana вручную создал простой дашборд, проверяющий работу приложения посредством Prometheus   
 
