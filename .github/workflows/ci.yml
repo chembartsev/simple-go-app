@@ -47,7 +47,7 @@ jobs:
       with:
         host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        key: ${{ secrets.VM_SSH_KEY }}
         script: |
           cd ~/simple-go-app
           echo "🚀 Starting deployment..."
