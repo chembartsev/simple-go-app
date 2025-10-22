@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     
     steps:
@@ -26,8 +26,11 @@ jobs:
         # Test metrics endpoint  
         curl -f http://localhost:8080/metrics || exit 1
         
+        # Test hello endpoint
+        curl -f http://localhost:8080/hello || exit 1
+        
         docker stop test-app
-        echo "✅ Build and test passed"
+        echo "All tests passed"
     
     - name: Build and push to GitHub Registry
       run: |
@@ -40,35 +43,25 @@ jobs:
         # Push to GitHub Registry
         docker push ghcr.io/chembartsev/simple-go-app:latest
         
-        echo "✅ Image pushed to GitHub Registry"
-    
-    - name: Deploy to VM
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_SSH_KEY }}
-        script: |
-          cd ~/simple-go-app
-          echo "🚀 Starting deployment..."
-          
-          # Login to GitHub Registry
-          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          
-          # Pull and restart
-          docker-compose pull app
-          docker-compose up -d
-          
-          echo "✅ Deployment completed"
+        echo "pushed to GitHub Registry"
     
     - name: Deploy instructions
       run: |
-        echo "To deploy manually:"
-        echo "1. git pull"
-        echo "2. docker-compose down"
-        echo "3. docker-compose up -d --build"
+        echo "CI/CD Pipeline completed successfully!"
         echo ""
-        echo "Access:"
-        echo "App: http://your-server"
-        echo "Grafana: http://your-server:3000"
-        echo "Prometheus: http://your-server:9090"
+        echo "Deploy on VM:"
+        echo "cd ~/simple-go-app"
+        echo "echo '${{ secrets.GHCR_TOKEN }}' | docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+        echo "docker-compose pull app"
+        echo "docker-compose up -d"
+        echo ""
+        echo "Check deployment:"
+        echo "docker-compose ps"
+        echo "curl http://localhost/health"
+        echo ""
+        echo "Access your application:"
+        echo "App: http://localhost"
+        echo "Grafana: http://localhost:3000 (admin/admin123)"
+        echo "Prometheus: http://localhost:9090"
+        echo ""
+        echo "Image available at: ghcr.io/chembartsev/simple-go-app:latest" 
