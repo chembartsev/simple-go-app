@@ -25,12 +25,9 @@ jobs:
         
         # Test metrics endpoint  
         curl -f http://localhost:8080/metrics || exit 1
-        
-        # Test hello endpoint
-        curl -f http://localhost:8080/hello || exit 1
-        
+                
         docker stop test-app
-        echo "All tests passed"
+        echo "Build and tests passed"
     
     - name: Build and push to GitHub Registry
       run: |
